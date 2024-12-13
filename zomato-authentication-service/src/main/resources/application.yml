@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: ZOMATO-AUTHENTICATION-SERVICE
+    name: authentication-service
   h2:
     console:
       enabled: true

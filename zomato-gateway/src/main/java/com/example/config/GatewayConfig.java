@@ -17,13 +17,13 @@ public class GatewayConfig {
         return builder.routes()
                 .route("zomato-app-service", r -> r.path("/zomato/**")
                         .filters(f -> f.filter(filter))
-                        .uri("lb://ZOMATO-APP-SERVICE"))
-                .route("zomato-restaurant-service", r -> r.path("/restaurant/**")
+                        .uri("lb://zomato-app-service"))
+                .route("restaurant-service", r -> r.path("/restaurant/**")
                         .filters(f -> f.filter(filter))
-                        .uri("lb://ZOMATO-RESTAURANT-SERVICE"))
-                .route("zomato-authentication-service", r -> r.path("/auth/**")
+                        .uri("lb://restaurant-service"))
+                .route("authentication-service", r -> r.path("/auth/**", "/api/**")
                         .filters(f -> f.filter(filter))
-                        .uri("lb://ZOMATO-AUTHENTICATION-SERVICE"))
+                        .uri("lb://authentication-service"))
                 .build();
     }
 }

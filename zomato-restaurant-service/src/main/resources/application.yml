@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: ZOMATO-RESTAURANT-SERVICE
+    name: restaurant-service
 
 eureka:
   client:

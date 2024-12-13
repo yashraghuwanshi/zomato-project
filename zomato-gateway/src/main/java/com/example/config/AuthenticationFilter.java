@@ -1,5 +1,6 @@
 package com.example.config;
 
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -11,16 +12,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-
 @RefreshScope
 @Component
 public class AuthenticationFilter implements GatewayFilter {
 
-    @Autowired
-    private RouterValidator routerValidator; // Custom route validator
+    private final RouterValidator routerValidator; // Custom route validator
+
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    public AuthenticationFilter(RouterValidator routerValidator, JwtUtil jwtUtil) {
+        this.routerValidator = routerValidator;
+        this.jwtUtil = jwtUtil;
+    }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -39,8 +43,9 @@ public class AuthenticationFilter implements GatewayFilter {
             final String token = this.getAuthHeader(request);
 
             if (jwtUtil.isInvalid(token)) {
-                return this.onError(exchange, "Authorization header is invalid", HttpStatus.UNAUTHORIZED);
+                return this.onError(exchange, "Authorization header is invalid", HttpStatus.FORBIDDEN);
             }
+            this.populateRequestWithHeaders(exchange, token);
         }
 
         return chain.filter(exchange);
@@ -57,10 +62,19 @@ public class AuthenticationFilter implements GatewayFilter {
 
     private String getAuthHeader(ServerHttpRequest request) {
         String authHeader = request.getHeaders().getOrEmpty("Authorization").get(0);
+        System.out.println(authHeader);
         return authHeader.startsWith("Bearer ") ? authHeader.substring(7).trim() : authHeader.trim();
     }
 
     private boolean isAuthMissing(ServerHttpRequest request) {
         return !request.getHeaders().containsKey("Authorization");
+    }
+
+    private void populateRequestWithHeaders(ServerWebExchange exchange, String token) {
+        Claims claims = jwtUtil.getAllClaimsFromToken(token);
+        System.out.println("Claims: " + claims);
+        exchange.getRequest().mutate()
+                .header("role", String.valueOf(claims.get("role")))
+                .build();
     }
 }

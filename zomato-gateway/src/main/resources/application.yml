@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: ZOMATO-GATEWAY
+    name: api-gateway
   cloud:
     gateway:
       discovery:

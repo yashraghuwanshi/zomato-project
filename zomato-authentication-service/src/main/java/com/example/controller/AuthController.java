@@ -39,9 +39,5 @@ public class AuthController {
         return "Token is valid";
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<?> getUsers() {
-        List<User> users = authService.getUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
-    }
+
 }
