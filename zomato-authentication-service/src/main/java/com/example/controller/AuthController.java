@@ -33,6 +33,12 @@ public class AuthController {
         return ResponseEntity.ok(authResponse);
     }
 
+    @GetMapping("/validate")
+    public String validateToken(@RequestParam("token") String token) {
+        authService.validateToken(token);
+        return "Token is valid";
+    }
+
     @GetMapping("/users")
     public ResponseEntity<?> getUsers() {
         List<User> users = authService.getUsers();

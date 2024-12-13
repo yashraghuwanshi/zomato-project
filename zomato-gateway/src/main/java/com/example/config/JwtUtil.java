@@ -9,25 +9,30 @@ import java.security.Key;
 import java.util.Date;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtil {
 
-    public static final String SECRET_KEY = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
+    @Value("${jwt.secret}")
+    private String secret;
 
     private Key getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public Claims getAllClaimsFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(getSignKey()).build().parseClaimsJws(token).getBody();
     }
+
     private boolean isTokenExpired(String token) {
         return this.getAllClaimsFromToken(token).getExpiration().before(new Date());
     }
+
     public boolean isInvalid(String token) {
         return this.isTokenExpired(token);
     }
+
 }

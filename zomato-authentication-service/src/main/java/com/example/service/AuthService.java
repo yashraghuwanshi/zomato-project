@@ -74,6 +74,10 @@ public class AuthService {
 
     }
 
+    public void validateToken(String token) {
+        jwtUtil.validateToken(token);
+    }
+
     public List<User> getUsers() {
         return userRepository.findAll();
     }

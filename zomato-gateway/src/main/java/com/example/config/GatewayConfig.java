@@ -15,13 +15,13 @@ public class GatewayConfig {
     @Bean
     public RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route("zomato-app-serivce", r -> r.path("/zomato/**")
+                .route("zomato-app-service", r -> r.path("/zomato/**")
                         .filters(f -> f.filter(filter))
                         .uri("lb://ZOMATO-APP-SERVICE"))
-                .route("zomato-restaurant-serivce", r -> r.path("/restaurant/**")
+                .route("zomato-restaurant-service", r -> r.path("/restaurant/**")
                         .filters(f -> f.filter(filter))
                         .uri("lb://ZOMATO-RESTAURANT-SERVICE"))
-                .route("zomato-authentication-serivce", r -> r.path("/auth/**")
+                .route("zomato-authentication-service", r -> r.path("/auth/**")
                         .filters(f -> f.filter(filter))
                         .uri("lb://ZOMATO-AUTHENTICATION-SERVICE"))
                 .build();
