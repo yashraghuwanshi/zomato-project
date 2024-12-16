@@ -28,8 +28,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .map(role -> new SimpleGrantedAuthority(role.getUserRole().toString()))
                 .collect(Collectors.toSet());
 
-        System.out.println(authorities);
-
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }
 }

@@ -16,24 +16,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.List;
 
 @Service
 public class AuthService {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    public AuthService(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    public void registerUser(User user){
+    public void signUp(User user){
 
         if(userRepository.existsByUsername(user.getUsername())){
             throw new IllegalArgumentException("Username is already taken!");
@@ -44,14 +44,10 @@ public class AuthService {
         }
 
         String encodedPassword = passwordEncoder.encode(user.getPassword());
-
         user.setPassword(encodedPassword);
-
-        System.out.println(user.getPassword());
 
         Role role = new Role();
         role.setUserRole(UserRole.ROLE_USER);
-
         user.setRoles(Collections.singleton(role));
 
         userRepository.save(user);
@@ -63,11 +59,20 @@ public class AuthService {
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
         if(authentication.isAuthenticated()){
+
+            // Log authentication details
+            System.out.println("Authenticated user: " + authentication.getName());
+            System.out.println("Authorities: " + authentication.getAuthorities());
+
+            // Set authentication context
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            System.out.println("Name: " + authentication.getName());
-            String token = jwtUtil.generateToken(authentication.getName());
-            System.out.println(token);
+
+            // Generate token
+            String token = jwtUtil.generateToken(authentication);
+            System.out.println("Generated Token: " + token);
+
             return token;
+
         } else {
             throw new UsernameNotFoundException("Invalid Username/Password");
         }

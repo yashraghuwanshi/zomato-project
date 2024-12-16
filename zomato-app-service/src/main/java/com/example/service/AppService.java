@@ -22,7 +22,7 @@ public class AppService {
         OrderResponse orderResponse = restClientBuilder
                 .build()
                 .get()
-                .uri("http://ZOMATO-RESTAURANT-SERVICE/restaurant/orders/status/{orderId}", orderId)
+                .uri("http://restaurant-service/restaurant/orders/status/{orderId}", orderId)
                 .retrieve()
                 .toEntity(OrderResponse.class)
                 .getBody();

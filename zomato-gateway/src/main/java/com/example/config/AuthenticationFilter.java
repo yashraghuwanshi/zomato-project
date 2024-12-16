@@ -17,7 +17,6 @@ import reactor.core.publisher.Mono;
 public class AuthenticationFilter implements GatewayFilter {
 
     private final RouterValidator routerValidator; // Custom route validator
-
     private final JwtUtil jwtUtil;
 
     @Autowired
@@ -45,6 +44,7 @@ public class AuthenticationFilter implements GatewayFilter {
             if (jwtUtil.isInvalid(token)) {
                 return this.onError(exchange, "Authorization header is invalid", HttpStatus.FORBIDDEN);
             }
+
             this.populateRequestWithHeaders(exchange, token);
         }
 
@@ -71,10 +71,20 @@ public class AuthenticationFilter implements GatewayFilter {
     }
 
     private void populateRequestWithHeaders(ServerWebExchange exchange, String token) {
+
         Claims claims = jwtUtil.getAllClaimsFromToken(token);
+
         System.out.println("Claims: " + claims);
+
+        String username = claims.getSubject();
+        String roles = claims.get("roles").toString();
+
+        System.out.println("username: " + username);
+        System.out.println("roles: " + roles);
+
         exchange.getRequest().mutate()
-                .header("role", String.valueOf(claims.get("role")))
+                .header("username", username)
+                .header("roles", roles)
                 .build();
     }
 }

@@ -7,10 +7,7 @@ import com.example.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -19,9 +16,9 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody User user) {
-        authService.registerUser(user);
+    @PostMapping("/signup")
+    public ResponseEntity<?> signUp(@RequestBody User user) {
+        authService.signUp(user);
         return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
     }
 
