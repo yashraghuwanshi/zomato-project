@@ -8,9 +8,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="zomato-gateway" />
-        <module name="zomato-authentication-service" />
       </profile>
-      <profile name="Annotation profile for zomato-restaurant-service" enabled="true">
+      <profile name="Annotation profile for zomato-authentication-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -18,6 +17,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
         <module name="zomato-service-registry" />
+        <module name="zomato-authentication-service" />
         <module name="zomato-restaurant-service" />
         <module name="zomato-app-service" />
       </profile>

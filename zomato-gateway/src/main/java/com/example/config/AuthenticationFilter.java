@@ -48,10 +48,11 @@ public class AuthenticationFilter implements GatewayFilter {
             this.populateRequestWithHeaders(exchange, token);
         }
 
-        return chain.filter(exchange);
+        System.out.println("Forwarding request to downstream service...");
+        return chain.filter(exchange)
+                .doOnSuccess(aVoid -> System.out.println("Request successfully processed by downstream service"))
+                .doOnError(error -> System.err.println("Error occurred: " + error.getMessage()));
     }
-
-    /* PRIVATE METHODS */
 
     private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
         System.err.println("Authentication error: " + err); // Log the error

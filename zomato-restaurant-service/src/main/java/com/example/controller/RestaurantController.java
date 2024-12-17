@@ -21,6 +21,7 @@ public class RestaurantController {
 
     @GetMapping("/orders/status/{orderId}")
     public OrderResponse getOrder(@PathVariable String orderId) {
+
         LOGGER.info("Requested Order ID: {}", orderId);
 
         OrderResponse orderResponse = service.getOrder(orderId);

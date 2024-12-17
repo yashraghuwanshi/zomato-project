@@ -9,6 +9,9 @@ spring:
       discovery:
         locator:
           enabled: true
+      default-filters:
+        - AddRequestHeader=username, ${username}
+        - AddRequestHeader=roles, ${roles}
 
 eureka:
   client:
