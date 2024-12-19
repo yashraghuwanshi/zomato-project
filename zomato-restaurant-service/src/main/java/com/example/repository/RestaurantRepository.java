@@ -1,21 +1,19 @@
 package com.example.repository;
 
 import com.example.payload.OrderResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class RestaurantRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestaurantRepository.class);
-
     public OrderResponse getOrders(String orderId) {
         return generateRandomOrders().get(orderId);
+    }
+
+    public List<OrderResponse> getOrders(){
+        return new ArrayList<>(generateRandomOrders().values());
     }
 
     private Map<String, OrderResponse> generateRandomOrders() {

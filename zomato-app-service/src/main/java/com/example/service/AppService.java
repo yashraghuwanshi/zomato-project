@@ -1,23 +1,24 @@
 package com.example.service;
 
 import com.example.payload.OrderResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.util.List;
+
+@Slf4j
+@RequiredArgsConstructor
 @Service
 public class AppService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppService.class);
-
-    @Autowired
-    private RestClient.Builder restClientBuilder;
+    private final RestClient.Builder restClientBuilder;
 
     public OrderResponse fetchOrderStatus(String orderId){
 
-        LOGGER.info("Requested Order ID (APP SERVICE): {}", orderId);
+        log.info("Requested Order ID (APP SERVICE): {}", orderId);
 
         OrderResponse orderResponse = restClientBuilder
                 .build()
@@ -27,8 +28,19 @@ public class AppService {
                 .toEntity(OrderResponse.class)
                 .getBody();
 
-        LOGGER.info("Order Response (APP SERVICE): {}", orderResponse);
+        log.info("Order Response (APP SERVICE): {}", orderResponse);
 
         return orderResponse;
+    }
+
+    public List<OrderResponse> getOrders(){
+
+        return restClientBuilder
+                .build()
+                .get()
+                .uri("http://restaurant-service/restaurant/orders")
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {});
+
     }
 }

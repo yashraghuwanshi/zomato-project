@@ -4,20 +4,20 @@ import com.example.model.User;
 import com.example.payload.AuthResponse;
 import com.example.payload.LoginRequest;
 import com.example.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@RequestBody User user) {
+    public ResponseEntity<String> signUp(@RequestBody User user) {
         authService.signUp(user);
         return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
     }
@@ -35,6 +35,4 @@ public class AuthController {
         authService.validateToken(token);
         return "Token is valid";
     }
-
-
 }

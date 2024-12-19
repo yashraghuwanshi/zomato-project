@@ -4,14 +4,33 @@ server:
 spring:
   application:
     name: api-gateway
+
   cloud:
     gateway:
       discovery:
         locator:
           enabled: true
-      default-filters:
-        - AddRequestHeader=username, ${username}
-        - AddRequestHeader=roles, ${roles}
+      routes:
+        - id: zomato-app-service
+          uri: lb://zomato-app-service
+          predicates:
+            - Path=/zomato/**
+          filters:
+            - AuthenticationFilter
+
+        - id: restaurant-service
+          uri: lb://restaurant-service
+          predicates:
+            - Path=/restaurant/**
+          filters:
+            - AuthenticationFilter
+
+        - id: authentication-service
+          uri: lb://authentication-service
+          predicates:
+              - Path=/auth/**
+          filters:
+              - AuthenticationFilter
 
 eureka:
   client:
