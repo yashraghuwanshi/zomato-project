@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@SuppressWarnings("unused")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/auth")
@@ -28,11 +29,5 @@ public class AuthController {
         AuthResponse authResponse = new AuthResponse();
         authResponse.setAccessToken(token);
         return ResponseEntity.ok(authResponse);
-    }
-
-    @GetMapping("/validate")
-    public String validateToken(@RequestParam("token") String token) {
-        authService.validateToken(token);
-        return "Token is valid";
     }
 }

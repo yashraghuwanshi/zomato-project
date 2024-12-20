@@ -6,7 +6,8 @@ import com.example.model.UserRole;
 import com.example.payload.LoginRequest;
 import com.example.repository.UserRepository;
 import com.example.util.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
+@RequiredArgsConstructor
+@Slf4j
 @Service
 public class AuthService {
 
@@ -25,21 +28,13 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public AuthService(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    public void signUp(User user) {
 
-    public void signUp(User user){
-
-        if(userRepository.existsByUsername(user.getUsername())){
+        if (Boolean.TRUE.equals(userRepository.existsByUsername(user.getUsername()))) {
             throw new IllegalArgumentException("Username is already taken!");
         }
 
-        if(userRepository.existsByEmail(user.getEmail())){
+        if (Boolean.TRUE.equals(userRepository.existsByEmail(user.getEmail()))) {
             throw new IllegalArgumentException("Email is already taken!");
         }
 
@@ -53,23 +48,23 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    public String login(LoginRequest loginRequest){
+    public String login(LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-        if(authentication.isAuthenticated()){
+        if (authentication.isAuthenticated()) {
 
             // Log authentication details
-            System.out.println("Authenticated user: " + authentication.getName());
-            System.out.println("Authorities: " + authentication.getAuthorities());
+            log.debug("Authenticated user: {}", authentication.getName());
+            log.debug("Authorities: {}", authentication.getAuthorities());
 
             // Set authentication context
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             // Generate token
             String token = jwtUtil.generateToken(authentication);
-            System.out.println("Generated Token: " + token);
+            log.debug("Generated Token: {}", token);
 
             return token;
 
@@ -77,9 +72,5 @@ public class AuthService {
             throw new UsernameNotFoundException("Invalid Username/Password");
         }
 
-    }
-
-    public void validateToken(String token) {
-        jwtUtil.validateToken(token);
     }
 }

@@ -10,21 +10,21 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
+@SuppressWarnings("unused")
 @Slf4j
 @Component
-public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
+public class AuthenticationFilter extends AbstractGatewayFilterFactory<Object> {
 
     private final RouterValidator routerValidator; // Custom route validator
     private final JwtUtil jwtUtil;
 
     public AuthenticationFilter(RouterValidator routerValidator, JwtUtil jwtUtil) {
-        super(Config.class);
         this.routerValidator = routerValidator;
         this.jwtUtil = jwtUtil;
     }
 
     @Override
-    public GatewayFilter apply(Config config) {
+    public GatewayFilter apply(Object config) {
 
         return ((exchange, chain) -> {
             if (routerValidator.isSecured.test(exchange.getRequest())) {
@@ -61,9 +61,5 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
             }
             return chain.filter(exchange);
         });
-    }
-
-    public static class Config {
-        // Add config properties if needed
     }
 }
