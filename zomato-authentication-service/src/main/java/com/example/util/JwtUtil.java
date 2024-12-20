@@ -3,7 +3,6 @@ package com.example.util;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,12 +14,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @Component
 public class JwtUtil {
 
     @Value("${jwt.secret}")
-    private final String secretKey;
+    private String secretKey;
 
     private Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
