@@ -1,15 +1,12 @@
 package com.example.config;
 
-import com.example.util.JwtUtil;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,35 +20,22 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    private final JwtUtil jwtUtil;
-
-    @Autowired
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
-    }
+public class RoleFilter extends OncePerRequestFilter {
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String roles = request.getHeader("X-Roles");
 
-        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        log.debug("roles: {}", roles);
 
-        if(authHeader != null){
-
-            String token = authHeader.substring(7);
-
-            Claims claims = jwtUtil.getAllClaimsFromToken(token);
-            String username = claims.getSubject();
-            String roles = claims.get("roles", String.class);
-
+        if (roles != null) {
             List<GrantedAuthority> authorities = Arrays.stream(roles.split(","))
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(username, null, authorities);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(null, null, authorities);
+
+            log.debug("authentication: {}", authentication);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
@@ -59,4 +43,3 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
-
